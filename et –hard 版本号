@@ -1,0 +1,119 @@
+[33mcommit d653f0df7808406e220aa4e5c17446b0d2723321[m[33m ([m[1;36mHEAD -> [m[1;32mdev[m[33m)[m
+Author: vaeal <2421876000@qq.com>
+Date:   Fri Nov 8 17:11:03 2019 +0800
+
+    try 3
+    
+    Signed-off-by: vaeal <2421876000@qq.com>
+
+[33mcommit 81697fad7ff6c955680aceceefdd3c9359eca5ab[m
+Author: vaeal <2421876000@qq.com>
+Date:   Fri Nov 8 17:05:59 2019 +0800
+
+    try again
+
+[33mcommit 6e7c487714649085d0ed0cd9fb73029c82f9b830[m
+Author: vaeal <2421876000@qq.com>
+Date:   Fri Nov 8 16:54:02 2019 +0800
+
+    try branch
+
+[33mcommit cec392919fa908c751f06f87eca21237fda91e14[m[33m ([m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmaster[m[33m)[m
+Author: vaeal <2421876000@qq.com>
+Date:   Fri Nov 8 15:10:40 2019 +0800
+
+    ok
+    
+    git status
+    git commit -m ok
+
+[33mcommit 0ef93ec3d072f19832680ff51aa61081b23bbb88[m
+Merge: a1048b0 5e89cc9
+Author: vaeal <45780395+vaeal@users.noreply.github.com>
+Date:   Fri Nov 8 14:12:11 2019 +0800
+
+    Merge pull request #2 from shun-w/master
+    
+    修改2
+
+[33mcommit 5e89cc9d773243165113dfd433474ffe4b2efd01[m
+Merge: e9d761e 4228b36
+Author: shun <896774136@qq.com>
+Date:   Fri Nov 8 13:09:22 2019 +0800
+
+    Merge branch 'master' of https://github.com/shun-w/melongation
+
+[33mcommit e9d761e17d9c4dcea31f9171ba60e6e6d42fb5c6[m
+Author: shun <896774136@qq.com>
+Date:   Fri Nov 8 13:08:53 2019 +0800
+
+    add fileserver
+
+[33mcommit a1048b06c54a9c73383157b83f0e5d14d3d86506[m
+Merge: 139a2f0 4228b36
+Author: vaeal <45780395+vaeal@users.noreply.github.com>
+Date:   Tue Nov 5 22:21:55 2019 +0800
+
+    Merge pull request #1 from shun-w/master
+    
+    修改更新
+
+[33mcommit 4228b36063e4b7736e16c6fb9e473681b4c2708c[m
+Author: Admin <Admin@Admin>
+Date:   Tue Nov 5 17:31:21 2019 +0800
+
+    增加了新用户
+
+[33mcommit 84e729d0813f4bfefa11e7ca484e25eadf1f3e78[m
+Author: shun <896774136@qq.com>
+Date:   Tue Nov 5 17:10:27 2019 +0800
+
+    remo
+
+[33mcommit 139a2f0096bd076ffcb6e26276740a86ca2543ea[m
+Author: shun <896774136@qq.com>
+Date:   Mon Nov 4 21:14:24 2019 +0800
+
+    aa
+
+[33mcommit 76b5914b7f747c72c82adbdd3808aa9ee04ab4bc[m
+Author: shun <896774136@qq.com>
+Date:   Mon Nov 4 21:00:17 2019 +0800
+
+    cc
+
+[33mcommit b7e44e610a28c3a797b44bdee6357f7a3fd299a6[m
+Author: shun <896774136@qq.com>
+Date:   Mon Nov 4 18:05:40 2019 +0800
+
+    mm
+
+[33mcommit 6c8a4d1b089636f011b7a24d32889ed9c95f592e[m
+Author: shun <896774136@qq.com>
+Date:   Mon Nov 4 17:59:27 2019 +0800
+
+    commit1
+
+[33mcommit bc55465a3c8d5544e4ffb87b3ddd8c001e4b9eca[m
+Author: shun <896774136@qq.com>
+Date:   Mon Nov 4 16:32:45 2019 +0800
+
+    mmm
+
+[33mcommit ff1f6488cfbcb6b75e2a20eacace54880c2c0843[m
+Author: shun <896774136@qq.com>
+Date:   Mon Nov 4 14:17:37 2019 +0800
+
+    second
+
+[33mcommit 3d2b5ac346c13e09a45825f0a8378b4faccbedf9[m
+Author: shun <896774136@qq.com>
+Date:   Mon Nov 4 14:15:45 2019 +0800
+
+    first
+
+[33mcommit d3dc72f73ddb69f4f2c030603452ffcf73dd1980[m
+Author: shun <896774136@qq.com>
+Date:   Mon Nov 4 12:21:50 2019 +0800
+
+    第一次提交
