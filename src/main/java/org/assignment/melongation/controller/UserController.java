@@ -68,6 +68,7 @@ public class UserController {
 
         if (!StringUtils.isEmpty(checkCode) && !StringUtils.isEmpty(checkCode) && (checkCode.toLowerCase()).equals(sessionCode.toLowerCase())) {
             User user = userService.login(username, password);
+            System.out.println(user.toString());
             if (user != null && user.getUsername() != null) {
                 String username1 = URLEncoder.encode(username, "utf-8");
                 Cookie cookie = new Cookie("username", username1);

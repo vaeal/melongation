@@ -4,6 +4,7 @@ import org.apache.ibatis.annotations.*;
 import org.assignment.melongation.pojo.Admin;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Admin持久层代码
@@ -32,7 +33,7 @@ public interface AdminMapper {
      * @param admin
      * @return
      */
-    @Insert("insert into `admin` values (null, #{username}, #{password},#{image}, #{email})")
+    @Insert("insert into `admin` values (null, #{username}, #{password}, #{image}, #{email})")
     @Options(keyColumn = "id", keyProperty = "id", useGeneratedKeys = true)
     public Integer saveAdmin(Admin admin);
 
@@ -56,5 +57,32 @@ public interface AdminMapper {
      * @param password
      */
     @Select("select * from admin where username=#{username} and password=#{password}")
-    public void selectAdminByUsernameAndPassword(String username, String password);
+    public Admin selectAdminByUsernameAndPassword(@Param("username")String username, @Param("password")String password);
+
+    /**
+     * 管理员模糊查询
+     * @param keyWord
+     * @return
+     */
+    @Select("select * from admin where username like '%${keyWord}%'")
+    public List<Admin> searchAdminByKeyword(@Param("keyWord") String keyWord);
+
+    /**
+     * 管理员账号查询总条数
+     */
+    @Select(value = "select count(*) from admin")
+    int getCount();
+
+    /**
+     * 管理员分页查询
+     */
+    @Select(value = "select * from admin  limit #{pageNo},#{pageSize}")
+    List<Admin> pageList(Map map);
+
+    /**
+     * 储存图像的src
+     */
+    @Select(value = "update `admin` set image= #{image} where id=#{id}")
+    void uploadImage(Map map);
+
 }

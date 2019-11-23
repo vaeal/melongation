@@ -65,7 +65,10 @@ insert into `user` values
 
 
 insert into `admin` values
-(1,'张三','12345678','','123@qq.com');
+(1,'张三','12345678','','123@qq.com'),
+(2,'周珂','12345678','','zhouke@qq.com'),
+(3,'童材','12345678','','tongcai@qq.com'),
+(4,'周杰伦','12345678','','jay@qq.com');
 
 
 -- 初始化一张问卷

@@ -1,12 +1,293 @@
 package org.assignment.melongation.controller;
 
 
+import org.assignment.melongation.mapper.AdminMapper;
+import org.assignment.melongation.pojo.Admin;
+import org.assignment.melongation.pojo.User;
+import org.assignment.melongation.service.AdminService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.server.Session;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.File;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
+
+    @Autowired
+    AdminService adminService;
+
+    @Autowired
+    AdminMapper adminMapper;
+    /**
+     *管理员登录页面
+     * @return
+     */
+    @GetMapping("/login")
+    public String getLoginForm() {
+        return "admin/login";
+    }
+
+    /**
+     *管理员登录
+     * @param username
+     * @param password
+     * @param checkCode
+     * @param session
+     * @param model
+     * @param resp
+     * @return
+     * @throws UnsupportedEncodingException
+     */
+    @PostMapping("/login")
+    public String login(String username, String password, String checkCode, HttpSession session, Model model, HttpServletResponse resp) throws UnsupportedEncodingException {
+        String sessionCode = session.getAttribute("code").toString();
+        session.removeAttribute("code");
+
+        if (!StringUtils.isEmpty(checkCode) && !StringUtils.isEmpty(checkCode) && (checkCode.toLowerCase()).equals(sessionCode.toLowerCase())) {
+           Admin admin = adminService.login(username, password);
+
+            System.out.println(admin.toString());
+            if (admin!= null && admin.getUsername() != null) {
+                String username1 = URLEncoder.encode(username, "utf-8");
+                Cookie cookie = new Cookie("username", username1);
+                cookie.setMaxAge(60 * 60 * 3);
+                resp.addCookie(cookie);
+                session.setAttribute("admin",admin);
+                return "redirect:/admin";
+            } else {
+                model.addAttribute("msg", "用户名或密码错误,请重新登录");
+                return "admin/login";
+            }
+        } else {
+            model.addAttribute("msg", "验证码错误,请重新输入");
+            return "admin/login";
+        }
+
+    }
+
+    /**
+     * 跳转管理员主界面
+     * @return
+     */
+
+    @GetMapping()
+    public String main() {
+        return "admin/main";
+    }
+
+    /**
+     * 管理员注销
+     * @param request
+     * @param response
+     * @return
+     */
+    @GetMapping("/logout")
+    public String logout(HttpServletRequest request, HttpServletResponse response, HttpSession session) {
+        Cookie[] cookies = request.getCookies();
+        for (int i = 0; i < cookies.length; i++) {
+            if (cookies[i].getName().equals("username")) {
+                cookies[i].setValue("");
+                cookies[i].setMaxAge(0);
+                response.addCookie(cookies[i]);
+            }
+        }
+        session.removeAttribute("admin");
+        return "redirect:/admin/login";
+    }
+
+    /**
+     * 增加管理员账号
+     * @param admin
+     * @return
+     */
+    @PostMapping("/addAdmin")
+    @ResponseBody
+    public ResponseEntity<Void> addAdmin(@RequestBody Admin admin) {
+        adminService.addAdmin(admin);
+        return ResponseEntity.ok().build();
+    }
+
+    /**
+     * 管理员账号管理主界面
+     * @param model
+     * @return
+     */
+    //@GetMapping("/adminMain")
+    //public String adminMain(Model model){
+     //   List<Admin> admins=adminService.findAll();
+//
+  //      model.addAttribute("admins",admins);
+    //    return "admin/adminMain";
+   // }
+
+    /**
+     *
+     *  删除管理员账号
+     * @param id
+     * @param model
+     * @return
+     */
+    @GetMapping("/delete")
+    public String deleteAdmin(@RequestParam Integer id,Model model){
+        adminService.deleteAdmin(id);
+        model.addAttribute("msg",4);
+        return "redirect:/admin/adminMain";
+    }
+
+    /**
+     * 修改管理员账号
+     * @param admin
+     * @return
+     */
+    @PostMapping("/edit")
+    @ResponseBody
+    public ResponseEntity<Void> edit(@RequestBody Admin admin,Model model){
+        adminService.editAdmin(admin);
+        model.addAttribute("msg",3);
+        return ResponseEntity.ok().build();
+    }
+
+    /**
+     * 查找管理员账号
+     * @param keyWord
+     * @param model
+     * @return
+     */
+    @GetMapping("/search")
+
+    public String search(@RequestParam(value = "keyWord") String keyWord,Model model){
+        List<Admin> admins=adminService.serchAdmins(keyWord);
+        if(admins.isEmpty()){
+            model.addAttribute("msg",1);
+        }else {
+            model.addAttribute("admins", admins);
+            model.addAttribute("msg",2);
+        }
+        return "admin/adminMain";
+    }
+
+    /**
+     * 跳转用户管理界面
+     * @return
+     */
+    @GetMapping("/userMain")
+    public String userMain(){
+        return "admin/userMain";
+    }
+
+    /**
+     * 跳转问卷管理界面
+     * @return
+     */
+    @GetMapping("/paperMain")
+    public String paperMain(){
+        return "admin/paperMain";
+    }
+
+    /**
+     * 展示管理员账号列表
+     * @param pageNumber
+     * @param model
+     * @return
+     */
+    @GetMapping("/adminMain")
+    public String page(String pageNumber,Model model){
+        String spPage=pageNumber;
+        //设置每页条数
+        int pageSize=5;
+        //页数
+        int pageNo=0;
+        if(spPage==null){
+            pageNo=1;
+        }else {
+            pageNo = Integer.valueOf(spPage);
+            if (pageNo < 1) {
+                pageNo = 1;
+            }
+        }
+        //设置最大页数
+        int totalCount=0;
+        int count=adminService.getCount();
+        if(count>0){
+            totalCount=count;
+        }
+        int maxPage=totalCount%pageSize==0?totalCount/pageSize:totalCount/pageSize+1;
+        if(pageNo>maxPage){
+            pageNo=maxPage;
+        }
+        int tempPageNo=(pageNo-1)*pageSize;
+        //计算总数量
+        //分页查询
+        Map map=new HashMap();
+        map.put("pageNo",tempPageNo);
+        map.put("pageSize",pageSize);
+
+        List<Admin> admins=adminService.pageAdmins(map);
+        //最后把信息放入model转发到页面把信息带过去
+        model.addAttribute("admins",admins);
+        model.addAttribute("pageNo",pageNo);
+        model.addAttribute("totalCount",totalCount);
+        model.addAttribute("maxPage",maxPage);
+        return "admin/adminMain";
+    }
+
+    /**
+     * 存储图像的src
+     *
+     * @param file
+     * @param imageId
+     * @param request
+     * @return
+     */
+
+    @PostMapping("/uploadImage")
+    public String test1(@RequestParam(value = "file") MultipartFile file, @RequestParam(value = "imageId") Integer imageId,HttpServletRequest request){
+        //获取上传文件名,包含后缀
+        String originalFilename = file.getOriginalFilename();
+        //获取后缀
+        String substring = originalFilename.substring(originalFilename.lastIndexOf("."));
+        //保存的文件名
+        String dFileName = UUID.randomUUID()+substring;
+        //保存路径
+        //springboot 默认情况下只能加载 resource文件夹下静态资源文件
+        String c=System.getProperty("user.dir");
+        String path=new String(c+"\\src\\main\\resources\\static\\images\\");
+        Map map=new HashMap();
+        map.put("image",dFileName);
+        map.put("id",imageId);
+        adminService.uploadImage(map);
+        //生成保存文件
+        File uploadFile = new File(path+dFileName);
+        System.out.println(uploadFile);
+        //将上传文件保存到路径
+        try {
+            file.transferTo(uploadFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return "redirect:/admin/adminMain";
+
+    }
+
 
 
 }
