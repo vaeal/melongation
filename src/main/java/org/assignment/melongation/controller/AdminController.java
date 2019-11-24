@@ -5,6 +5,7 @@ import org.assignment.melongation.mapper.AdminMapper;
 import org.assignment.melongation.pojo.Admin;
 import org.assignment.melongation.pojo.User;
 import org.assignment.melongation.service.AdminService;
+import org.assignment.melongation.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.server.Session;
 import org.springframework.http.ResponseEntity;
@@ -35,7 +36,7 @@ public class AdminController {
     AdminService adminService;
 
     @Autowired
-    AdminMapper adminMapper;
+    UserService userService;
     /**
      *管理员登录页面
      * @return
@@ -142,13 +143,13 @@ public class AdminController {
      *
      *  删除管理员账号
      * @param id
-     * @param model
+
      * @return
      */
     @GetMapping("/delete")
-    public String deleteAdmin(@RequestParam Integer id,Model model){
+    public String deleteAdmin(@RequestParam Integer id){
         adminService.deleteAdmin(id);
-        model.addAttribute("msg",4);
+
         return "redirect:/admin/adminMain";
     }
 
@@ -159,9 +160,9 @@ public class AdminController {
      */
     @PostMapping("/edit")
     @ResponseBody
-    public ResponseEntity<Void> edit(@RequestBody Admin admin,Model model){
+    public ResponseEntity<Void> edit(@RequestBody Admin admin){
         adminService.editAdmin(admin);
-        model.addAttribute("msg",3);
+
         return ResponseEntity.ok().build();
     }
 
@@ -184,14 +185,6 @@ public class AdminController {
         return "admin/adminMain";
     }
 
-    /**
-     * 跳转用户管理界面
-     * @return
-     */
-    @GetMapping("/userMain")
-    public String userMain(){
-        return "admin/userMain";
-    }
 
     /**
      * 跳转问卷管理界面
@@ -258,36 +251,139 @@ public class AdminController {
      * @return
      */
 
-    @PostMapping("/uploadImage")
-    public String test1(@RequestParam(value = "file") MultipartFile file, @RequestParam(value = "imageId") Integer imageId,HttpServletRequest request){
-        //获取上传文件名,包含后缀
-        String originalFilename = file.getOriginalFilename();
-        //获取后缀
-        String substring = originalFilename.substring(originalFilename.lastIndexOf("."));
-        //保存的文件名
-        String dFileName = UUID.randomUUID()+substring;
-        //保存路径
-        //springboot 默认情况下只能加载 resource文件夹下静态资源文件
-        String c=System.getProperty("user.dir");
-        String path=new String(c+"\\src\\main\\resources\\static\\images\\");
-        Map map=new HashMap();
-        map.put("image",dFileName);
-        map.put("id",imageId);
-        adminService.uploadImage(map);
-        //生成保存文件
-        File uploadFile = new File(path+dFileName);
-        System.out.println(uploadFile);
-        //将上传文件保存到路径
-        try {
-            file.transferTo(uploadFile);
-        } catch (IOException e) {
-            e.printStackTrace();
+//    @PostMapping("/uploadImage")
+//    public String test1(@RequestParam(value = "file") MultipartFile file, @RequestParam(value = "imageId") Integer imageId,HttpServletRequest request){
+//        //获取上传文件名,包含后缀
+//        String originalFilename = file.getOriginalFilename();
+//        //获取后缀
+//        String substring = originalFilename.substring(originalFilename.lastIndexOf("."));
+//        //保存的文件名
+//        String dFileName = UUID.randomUUID()+substring;
+//        //保存路径
+//        //springboot 默认情况下只能加载 resource文件夹下静态资源文件
+//        String c=System.getProperty("user.dir");
+//        String path=new String(c+"\\src\\main\\resources\\static\\images\\");
+//        Map map=new HashMap();
+//        map.put("image",dFileName);
+//        map.put("id",imageId);
+//        adminService.uploadImage(map);
+//        //生成保存文件
+//        File uploadFile = new File(path+dFileName);
+//        System.out.println(uploadFile);
+//        //将上传文件保存到路径
+//        try {
+//            file.transferTo(uploadFile);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//
+//        return "redirect:/admin/adminMain";
+//
+//    }
+
+    /**
+     * 跳转用户管理界面
+     * @return
+     */
+    @GetMapping("/userMain")
+    public String userMain(){
+        return "admin/userMain";
+    }
+
+    /**
+     * 展示用户列表
+     * @param pageNumber
+     * @param model
+     * @return
+     */
+    @GetMapping("/userMain")
+    public String userPage(String pageNumber,Model model){
+        String spPage=pageNumber;
+        //设置每页条数
+        int pageSize=5;
+        //页数
+        int pageNo=0;
+        if(spPage==null){
+            pageNo=1;
+        }else {
+            pageNo = Integer.valueOf(spPage);
+            if (pageNo < 1) {
+                pageNo = 1;
+            }
         }
-
-        return "redirect:/admin/adminMain";
-
+        //设置最大页数
+        int totalCount=0;
+        int count=adminService.getCountOfUser();
+        if(count>0){
+            totalCount=count;
+        }
+        int maxPage=totalCount%pageSize==0?totalCount/pageSize:totalCount/pageSize+1;
+        if(pageNo>maxPage){
+            pageNo=maxPage;
+        }
+        int tempPageNo=(pageNo-1)*pageSize;
+        //计算总数量
+        //分页查询
+        Map map=new HashMap();
+        map.put("pageNo",tempPageNo);
+        map.put("pageSize",pageSize);
+        List<User> users=adminService.pageUsers(map);
+        //最后把信息放入model转发到页面把信息带过去
+        model.addAttribute("users",users);
+        model.addAttribute("pageNo",pageNo);
+        model.addAttribute("totalCount",totalCount);
+        model.addAttribute("maxPage",maxPage);
+        return "admin/userMain";
     }
 
 
+    /**
+     * 增加用户账号
+     * @param user
+     * @return
+     */
+    @PostMapping("/addUser")
+    @ResponseBody
+    public ResponseEntity<Void> addUser(@RequestBody User user) {
+        adminService.addUser(user);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/deleteUser")
+    public String deleteUser(@RequestParam Integer id){
+        adminService.deleteUser(id);
+
+        return "redirect:/admin/userMain";
+    }
+
+    /**
+     * 修改用户账号
+     * @param user
+     * @return
+     */
+    @PostMapping("/editUser")
+    @ResponseBody
+    public ResponseEntity<Void> editUser(@RequestBody User user){
+        adminService.editUser(user);
+        return ResponseEntity.ok().build();
+    }
+
+    /**
+     * 查找用户账号
+     * @param keyWord
+     * @param model
+     * @return
+     */
+    @GetMapping("/searchUser")
+    public String searchUser(@RequestParam(value = "keyWord") String keyWord,Model model){
+        List<User> users=adminService.serchUsers(keyWord);
+        if(users.isEmpty()){
+            model.addAttribute("msg",1);
+        }else {
+            model.addAttribute("users", users);
+            model.addAttribute("msg",2);
+        }
+        return "admin/userMain";
+    }
 
 }

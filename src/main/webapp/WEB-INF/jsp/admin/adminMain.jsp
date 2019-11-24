@@ -18,17 +18,13 @@
 
     <style type="text/css">
 
-        #box-1{
-            width: 50px;
-            height: 50px;
-            border: 1px solid gray;
-            border-radius: 50%;
-        }
-        img{
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
 
+        #upload {
+            padding: 5px 10px;
+            background: #00b0f0;s
+            color: #FFF;
+            border: none;
+            border-radius: 5px;
         }
 
     </style>
@@ -59,7 +55,7 @@
                 <th>id</th>
                 <th>username</th>
                 <th>email</th>
-                <th>头像</th>
+<%--                <th>头像</th>--%>
                 <th>删除</th>
                 <th>修改</th>
             </tr>
@@ -70,17 +66,20 @@
                     <td>${admin.id}</td>
                     <td>${admin.username}</td>
                     <td>${admin.email}</td>
-                    <td><div id="box-1">
-                        <img id="show-img" src="${admin.image}"  alt=""/>
-                    </div>
-                        <div id="box-2">
-                            <form action="/admin/uploadImage" method="post" enctype="multipart/form-data">
-                                <input id="file" type="file" name="file" />
-                                <input type="hidden" name="imageId" value="${admin.id}"/>
-                                <input type="submit" value="提交"/>
-                            </form>
-                        </div>
-                       </td>
+<%--                    <td>--%>
+<%--                        <img src="${admin.image}"--%>
+<%--                             style="width: 70px;height: 70px; border-radius:250px;overflow: hidden;" alt="无头像"/>--%>
+<%--                                            --%>
+<%--                        <form name="fileUpload" action="http://106.13.162.39:8091/upload/image" method="post" enctype="multipart/form-data">--%>
+<%--                            <input name="file" type="file" style="display: inline" onchange="uploadImage(this)">--%>
+<%--                       </form>--%>
+
+
+<%--                        <form>--%>
+<%--                            <input type="hidden" id="data" name="data">--%>
+<%--                            <input type="hidden" id="userId" name="userId" value="${admin.id}">--%>
+<%--                        </form>--%>
+<%--                    </td>--%>
                     <c:choose>
                         <c:when test="${admin.id==sessionScope.admin.id}">
                             <td>#</td>
@@ -208,6 +207,97 @@
 
 <script>
 
+//     function uploadImage(t){
+// console.log("上传");
+//             var formData = new FormData();
+//             formData.append('file', t.files[0]);
+//             console.log(t.files[0]);
+//             // formData.append('id', $('#p_id').val());
+//             $.ajax({
+//                 url: 'http://106.13.162.39:8091/upload/image' ,
+//                 type: 'post',
+//                 crossDomain: true,
+//                 data: formData,
+//                 dataType: "json",
+//                 async: false,
+//                 cache: false,
+//                 contentType: false,
+//                 processData: false,
+//                 success:function(data){
+//                     console.log(data);
+//                 },
+//                 error:function (returndata){
+//                     alert(returndata);
+//                 }
+//             });
+//
+//         return true;
+//     }
+
+    // $("input[name='file']").change(function () {
+    //     console.log("修改头像");
+      // this.parent.submit();
+      //   document.getElementsByName("fileUpload")[0].submit();
+        // window.location.href=
+        // var file = this.files[0];
+
+        // let data=document.getElementsByName("file")[0].files[0];
+        // if (this.files[0].length == 0) {
+        //     alert("Please upload the image!");
+        //     return false;
+        // } else {
+        //     var extStart = file.name.lastIndexOf('.');
+        //     var ext = file.name.substring(extStart, file.length).toUpperCase();
+        //     if (ext !== '.PNG' && ext !== '.JPG' && ext !== '.JPEG' && ext !== '.GIF') {
+        //         alert("Please upload the correct picture format!");
+        //         this.value=null;
+        //         return false;
+        //     }
+        // console.log(file);
+        //
+    //     let formData = new FormData();
+    //     formData.append('file', data);
+    //     var token = $("meta[name='_csrf']").attr("content");
+    //     var header = $("meta[name='_csrf_header']").attr("content");
+    //     $(document).ajaxSend(function(e, xhr, options) {
+    //       xhr.setRequestHeader(header, token);
+    //     });
+    //
+    //     $.ajax({
+    //         url: "http://106.13.162.39:8091/upload/image",//文档接口
+    //         type: "post",
+    //         data: formData,
+    //         cache: false, //上传文件不需要缓存
+    //         async: false,
+    //         dataType: "json",
+    //         timeout : 10000,
+    //         processData: false, // 告诉jQuery不要去处理发送的数据
+    //         contentType: false, // 告诉jQuery不要去设置Content-Type请求头
+    //
+    //         success: function (data) {
+    //
+    //             console.log(data);
+    //             alert('上传成功')
+    //         },
+    //         error: function (data) {
+    //             alert('上传失败');
+    //             this.value = null;
+    //         }
+    //     });
+    //
+    // });
+//确认删除提示
+function delcfm(url) {
+    $('#url').val(url);//给会话中的隐藏属性URL赋值
+    $('#delcfmModel').modal();
+}
+
+function urlSubmit() {
+    var url = $.trim($("#url").val());//获取会话中的隐藏属性URL
+    toastr.success("删除成功！");
+    window.location.href = url;
+}
+
 
     $("#btn_add").click(function () {
         $('#myModal1').modal('show');
@@ -273,8 +363,9 @@
             //请求成功
             success: function (result) {
                 console.log(result);
-                var pageNo=$("#pageNo").val();
-                window.location.href = "http://localhost:8090/admin/adminMain?pageNumber="+pageNo;
+                var pageNo = $("#pageNo").val();
+                alert("增加成功!");
+                window.location.href = "http://localhost:8090/admin/adminMain?pageNumber=" + pageNo;
 
             },
             //请求失败，包含具体的错误信息
@@ -305,20 +396,10 @@
         $('#txt_departmentlevel').val(email)
     });
 
-    //点击add按钮，弹窗提供信息填写
 
 
-    //确认删除提示
-    function delcfm(url) {
-        $('#url').val(url);//给会话中的隐藏属性URL赋值
-        $('#delcfmModel').modal();
-    }
 
-    function urlSubmit() {
-        var url = $.trim($("#url").val());//获取会话中的隐藏属性URL
-        toastr.success("删除成功！");
-        window.location.href = url;
-    }
+
 
     <!--管理员账号修改ajax提交-->
     $('#btn_submit').click(function () {
@@ -379,8 +460,9 @@
             //请求成功
             success: function (result) {
                 console.log(result);
-                var pageNo=$("#pageNo").val();
-                window.location.href = "http://localhost:8090/admin/adminMain?pageNumber="+pageNo;
+                var pageNo = $("#pageNo").val();
+                alert("修改成功！");
+                window.location.href = "http://localhost:8090/admin/adminMain?pageNumber=" + pageNo;
 
             },
             //请求失败，包含具体的错误信息
@@ -426,12 +508,12 @@
         var e = event || window.event || arguments.callee.caller.arguments[0];
         if (e && e.keyCode == 13) { // enter 键
             var keyWord = $('#searchWord').val();
-            window.location.href = "http://localhost:8090/admin/search?keyWord=" + keyWord;
-
-
+            if(keyWord==""|keyWord==null){
+                window.location.href="http://localhost:8090/admin/adminMain";
+            }
+            else {
+                window.location.href = "http://localhost:8090/admin/search?keyWord=" + keyWord;}
         }
-
-
     }
 
     //搜索
@@ -476,8 +558,11 @@
     //点击触发搜索事件
     $('#search').click(function () {
         var keyWord = $('#searchWord').val();
-        window.location.href = "http://localhost:8090/admin/search?keyWord=" + keyWord;
-
+        if(keyWord==""|keyWord==null){
+            window.location.href="http://localhost:8090/admin/adminMain";
+        }
+        else {
+        window.location.href = "http://localhost:8090/admin/search?keyWord=" + keyWord;}
     });
 
     $().ready(function () {
@@ -489,17 +574,12 @@
         if (msg == 2) {
             toastr.success("搜索成功！");
         }
-        if (msg == 3) {
-            toastr.success("修改成功！");
-        }
-        if (msg == 4) {
-            toastr.success("删除成功！");
-        }
+
 
     });
 
-/**
-    function checkPhoto(myupload){ // 检测上传是否符合要求
+    /**
+     function checkPhoto(myupload){ // 检测上传是否符合要求
         var file=document.getElementById("fileimg");
         var types=file.value.substr(file.value.lastIndexOf(".")+1).toLowerCase();
         if(file.value==""){
@@ -510,9 +590,9 @@
             return false;
         }
     };
- **/
-/**
-$(function(){
+     **/
+    /**
+     $(function(){
     var images=$("img#show-img");
     $.each(images,function (index,element) {
         console.log(index);
@@ -527,7 +607,9 @@ $(function(){
     })
 
 })
-    **/
+     **/
+
+
 </script>
 </body>
 </html>

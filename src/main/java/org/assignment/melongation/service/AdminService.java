@@ -1,6 +1,7 @@
 package org.assignment.melongation.service;
 
 import org.assignment.melongation.pojo.Admin;
+import org.assignment.melongation.pojo.User;
 
 
 import java.util.List;
@@ -64,6 +65,46 @@ public interface AdminService {
      * @param map
      */
     public void uploadImage(Map map);
+
+
+
+    /**
+     * 删除一个管理员账号
+     * @param id
+     */
+    public void deleteUser(Integer id);
+
+    /**
+     * 增加一个管理员
+     * @param user
+     */
+    public void addUser(User user);
+
+    /**
+     * 修改一个管理员
+     * @param user
+     */
+    public void editUser(User user);
+
+    /**
+     * 关键字查找管理员
+     * @param keyWord
+     * @return
+     */
+    public List<User> serchUsers(String keyWord);
+
+    /**
+     *获取管理员账号的总数量
+     * @return
+     */
+    public int getCountOfUser();
+
+    /**
+     * 管理员账号分页
+     * @param map
+     * @return
+     */
+    public List<User> pageUsers(Map map);
 
 
 }
